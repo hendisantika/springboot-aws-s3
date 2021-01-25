@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <link th:substituteby="common/header :: common_header"/>
+    <title>S3からファイルダウンロード</title>
+</head>
+<body>
+<h1>File Download</h1>
+<p><a href="/index" th:href="@{/index}">Back to home</a></p>
+<form action="#" method="post" th:action="@{/aws/s3/search}" th:object="${s3FileForm}">
+    <table>
+        <tr>
+            <td width="100px"><label for="fileName">検索キー</label>:</td>
+            <td><input id="fileName" size="30px" th:field="*{fileName}" type="text"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Search"/></td>
+        </tr>
+    </table>
+</form>
+<div th:if="${s3FileForm.fileList != null}">
+    <form action="#" method="post" th:action="@{/aws/s3/download}" th:object="${s3FileForm}">
+        <table border="1">
+            <tr>
+                <th width="20px">Download</th>
+                <th width="10px">Check</th>
+                <th>Bucket</th>
+                <th>Key</th>
+                <th>Content Type</th>
+                <th>Last Modified Date</th>
+            </tr>
+            <tr th:each="file:${s3FileForm.fileList}">
+                <td>
+                    <button name="downloadKey" th:field="*{downloadKey}" th:value="${file.key}" type="submit">Download
+                    </button>
+                </td>
+                <td><input th:field="*{checkedItems}" th:value="${file.key}" type="checkbox"/></td>
+                <td th:text="${file.bucketName}"></td>
+                <td th:text="${file.key}"></td>
+                <td th:text="${file.contentType}"></td>
+                <td th:text="${file.lastModifiedDate}"></td>
+            </tr>
+        </table>
+        <div><input type="submit" value="Download Selected"/></div>
+    </form>
+</div>
+</body>
+</html>
